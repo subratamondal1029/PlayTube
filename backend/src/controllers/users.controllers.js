@@ -100,6 +100,12 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
+  const calculateExpiryTime = (days) => {
+    days = Number(days.split("d")[0]);
+    const now = Math.floor(new Date() / 1000);
+    return now + days * 24 * 60 * 60;
+  };
+
   if (!username && !email) {
     throw new apiError(400, "username or email is required");
   }
@@ -125,9 +131,18 @@ const loginUser = asyncHandler(async (req, res) => {
     "-password -refreshToken"
   );
 
+  const accessTokenExpiry = process.env.ACCESS_TOKEN_EXPIRY;
+  const refreshAccessTokenExpiry = process.env.REFRESH_TOKEN_EXPIRY;
+
   return res
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
+    .cookie("accessToken", accessToken, {
+      ...options,
+      expire: calculateExpiryTime(accessTokenExpiry),
+    })
+    .cookie("refreshToken", refreshToken, {
+      ...options,
+      expire: calculateExpiryTime(refreshAccessTokenExpiry),
+    })
     .json(
       new apiResponse(
         200,
@@ -166,17 +181,25 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   );
 
   const user = await User.findById(decodedRefreshToken?._id);
+
   if (!user || user?.refreshToken !== clientRefreshToken)
     throw new apiError(401, "Invalid Refresh Token");
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
     user._id
   );
-
+  const accessTokenExpiry = process.env.ACCESS_TOKEN_EXPIRY;
+  const refreshAccessTokenExpiry = process.env.REFRESH_TOKEN_EXPIRY;
   return res
     .status(201)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
+    .cookie("accessToken", accessToken, {
+      ...options,
+      expire: calculateExpiryTime(accessTokenExpiry),
+    })
+    .cookie("refreshToken", refreshToken, {
+      ...options,
+      expire: calculateExpiryTime(refreshAccessTokenExpiry),
+    })
     .send(
       new apiResponse(
         200,

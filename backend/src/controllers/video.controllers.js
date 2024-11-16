@@ -28,7 +28,9 @@ const getAllVideos = asyncHandler(async (req, res) => {
     isPublished: true,
   };
 
-  if (userId) matchStatement.owner = new Types.ObjectId(userId);
+  if (userId !== "undefined" && userId !== "null") {
+    matchStatement.owner = new Types.ObjectId(userId);
+  }
   if (query)
     matchStatement.$or = [
       { title: { $regex: query, $options: "i" } },
