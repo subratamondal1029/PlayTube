@@ -9,10 +9,12 @@ import {
 import "../styles/Header.css";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleNavSlide } from "../store/slices/slideSlice";
+import { Avatar } from "@mui/material";
 
 const Header = () => {
   const dispath = useDispatch();
   const { isLogedIn, userData } = useSelector((state) => state.auth);
+
   return (
     <>
       <header className="flex-all">
@@ -52,10 +54,10 @@ const Header = () => {
                   {<VideoCallOutlined fontSize="large" />}
                 </Link>
                 <Link
-                  to={`/users/${userData.username}`}
+                  to={`/users/${userData?.username}`}
                   className="accountBtn flex-all circle"
                 >
-                  {<AccountCircleOutlined fontSize="large" />}
+                  {<Avatar src={userData?.avatar} />}
                 </Link>
               </>
             ) : (

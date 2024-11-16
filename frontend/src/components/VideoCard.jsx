@@ -1,7 +1,9 @@
 import { Avatar } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import VideoThumbnail from "./VideoThumbnail";
 
 const VideoCard = ({ video }) => {
+  const navigate = useNavigate();
   function timeSince(uploadDate) {
     const seconds = Math.floor((new Date() - new Date(uploadDate)) / 1000);
 
@@ -38,25 +40,30 @@ const VideoCard = ({ video }) => {
     }
   }
 
+  function navigateToUserProfile(e) {
+    e.preventDefault();
+    navigate(`/users/${video.owner.username}`);
+  }
+
   return (
     <Link to={`/player/${video._id}`} className="card">
       <div className="thumbnail">
-        <img src={video.thumbnail} alt={video.title} />
+        <VideoThumbnail thumbnail={video.thumbnail} title={video.title} />
         <div className="duration">{getDuration(video.duration)}</div>
       </div>
       <div className="videoInfo">
-        <Link to={`/users/${video.owner.username}`}>
+        <span onClick={navigateToUserProfile}>
           <Avatar alt={video.owner.username} src={video.owner.avatar} />
-        </Link>
+        </span>
         <div>
           <h3 className="videoTitle">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem
             inventore ratione consequuntur amet nesciunt est, pariatur
             asperiores temporibus impedit recusandae.
           </h3>
-          <Link to={`/users/${video.owner.username}`} className="channelName">
+          <span onClick={navigateToUserProfile} className="channelName">
             {video.owner.fullName}
-          </Link>
+          </span>
           <p className="videoUploadInfo">
             <span>{video.views} Views</span> <span className="dot"></span>{" "}
             <span>{timeSince(video.createdAt)}</span>
