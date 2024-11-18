@@ -5,8 +5,9 @@ const navSlideSlice = createSlice({
   initialState: true,
   reducers: {
     toggleNavSlide: (state) => !state,
+    defineNavVisibelity: (state, action) => (state = action.payload),
   },
 });
 
-export const { toggleNavSlide } = navSlideSlice.actions;
+export const { toggleNavSlide, defineNavVisibelity } = navSlideSlice.actions;
 export default navSlideSlice.reducer;
