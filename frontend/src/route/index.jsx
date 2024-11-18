@@ -4,7 +4,7 @@ import {
   Route,
 } from "react-router-dom";
 import App from "../App";
-import { Home, Auth, Error, Player } from "../pages";
+import { Home, Auth, Error, Player } from "../pages/index";
 import { SecureRoute } from "../components";
 
 const router = createBrowserRouter(

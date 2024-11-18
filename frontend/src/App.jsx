@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { Header, SlideNav } from "./components";
 import "./styles/utiles.css";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { authService } from "./backendServices";
 import { useDispatch } from "react-redux";
 import { login } from "./store/slices/authSlice";
@@ -50,7 +50,9 @@ function App() {
           <SlideNav />
         </>
       )}
-      <Outlet />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Outlet />
+      </Suspense>
     </>
   );
 }
