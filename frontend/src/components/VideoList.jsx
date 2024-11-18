@@ -3,8 +3,6 @@ import "../styles/VideoList.css";
 import VideoCardSimmer from "./simmerEffects/VideoCardSimmer";
 
 const VideoList = ({ cardNumbers = 3, videos = [], simmer = true }) => {
-  console.log(videos);
-
   return (
     <div
       className="videoList"

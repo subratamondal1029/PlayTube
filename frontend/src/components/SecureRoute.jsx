@@ -8,7 +8,7 @@ const SecureRoute = ({ children, authRequired = true }) => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    if (!isLogedIn && !authRequired) {
+    if (!isLogedIn && authRequired) {
       navigate("/login", { state: { from: pathname } });
     }
 

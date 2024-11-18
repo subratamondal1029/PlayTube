@@ -38,6 +38,10 @@ function App() {
     fetchUserDetails();
   }, []);
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       {isAuthPage && (
