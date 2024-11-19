@@ -181,7 +181,7 @@
 }
 
 .descriptionContainer .channelDetails {
-  margin-top: 20px;
+  margin-top: 30px;
   display: grid;
   grid-template-columns: 54px 152px;
 }

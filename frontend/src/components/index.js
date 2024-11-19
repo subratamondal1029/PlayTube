@@ -6,6 +6,7 @@ import Input from "./Input";
 import SecureRoute from "./SecureRoute";
 import RelatedVideoCard from "./RelatedVideoCard";
 import VideoThumbnail from "./VideoThumbnail";
+import Comment from "./Comment";
 
 export {
   Header,
@@ -16,4 +17,5 @@ export {
   SecureRoute,
   RelatedVideoCard,
   VideoThumbnail,
+  Comment,
 };

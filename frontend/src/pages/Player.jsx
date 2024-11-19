@@ -11,7 +11,7 @@ import {
   SmartDisplayOutlined,
 } from "@mui/icons-material";
 import { videoService } from "../backendServices/videoService";
-import { RelatedVideoCard } from "../components";
+import { Comment, RelatedVideoCard } from "../components";
 import { timeSince } from "../utiles";
 
 const Player = () => {
@@ -119,6 +119,7 @@ const Player = () => {
             </Link>
           </div>
         </div>
+        <Comment />
       </div>
       <div className="relatedContainer">
         <RelatedVideoCard />
