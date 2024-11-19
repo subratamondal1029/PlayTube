@@ -157,3 +157,48 @@
   height: 100%;
   align-items: flex-start;
 }
+
+.descriptionContainer {
+  width: 100%;
+  text-align: left;
+  background-color: rgba(99, 98, 98, 0.322);
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.descriptionContainer .uploadDetails {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  color: var(--default-color);
+  font-size: 18px;
+  margin-top: 5px;
+}
+
+.descriptionContainer .videoDescription {
+  margin-top: 10px;
+}
+
+.descriptionContainer .channelDetails {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: 54px 152px;
+}
+
+.descriptionContainer .channelDetails .channelQuickLink {
+  border: 1px solid #6d6d6d;
+  padding: 6px 10px;
+  max-width: 100px;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.channelDetails .channelQuickLink:hover {
+  background-color: #3a3a3a;
+  color: var(--default-color);
+}

@@ -8,9 +8,11 @@ import {
   ThumbUpAltOutlined,
   ReplyOutlined,
   TurnedInNotOutlined,
+  SmartDisplayOutlined,
 } from "@mui/icons-material";
 import { videoService } from "../backendServices/videoService";
 import { RelatedVideoCard } from "../components";
+import { timeSince } from "../utiles";
 
 const Player = () => {
   const { id } = useParams();
@@ -75,6 +77,46 @@ const Player = () => {
               <TurnedInNotOutlined fontSize="small" />
               Save
             </div>
+          </div>
+        </div>
+        <div className="descriptionContainer">
+          <div className="uploadDetails">
+            <div className="videoViews">{videoDetails?.views} Views</div>
+            <div className="uploadTime">
+              {timeSince(videoDetails?.createdAt)}
+            </div>
+          </div>
+          <div className="videoDescription">
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui, vero.
+            Totam, ducimus natus rem explicabo nesciunt non soluta
+            necessitatibus quas tempore nulla provident veritatis eum aperiam
+            dolor. Facere, aliquam quos.
+          </div>
+
+          <div className="channelDetails">
+            <Link to={`/users/${videoDetails?.owner?.username}`}>
+              <Avatar
+                sx={{ width: 45, height: 45 }}
+                src={videoDetails?.owner?.avatar}
+                sizes="large"
+              />
+            </Link>
+            <div>
+              <Link
+                className="channelName"
+                to={`/users/${videoDetails?.owner?.username}`}
+              >
+                Channel Name
+              </Link>
+              <div className="subscribers">100k Subscribers</div>
+            </div>
+            <div></div>
+            <Link
+              to={`/users/${videoDetails?.owner?.username}/videos`}
+              className="channelQuickLink"
+            >
+              <SmartDisplayOutlined /> Videos
+            </Link>
           </div>
         </div>
       </div>

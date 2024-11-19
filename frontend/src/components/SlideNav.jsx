@@ -42,7 +42,7 @@ const SlideNav = () => {
         {<ThumbUpAltOutlined />} Liked videos
       </NavLink>
       <NavLink
-        to={"/account/videos"}
+        to={"/users/videos"}
         className={({ isActive }) => `flex-all ${isActive ? "active" : ""}`}
       >
         {" "}
