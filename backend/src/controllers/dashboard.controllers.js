@@ -1,8 +1,8 @@
 import { Types } from "mongoose";
 import { User } from "../models/user.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import apiError from "../utils/apiError.js";
-import apiResponse from "../utils/apiResponse.js";
+import ApiError from "../utils/apiError.js";
+import ApiResponse from "../utils/apiResponse.js";
 
 const getChannelStats = asyncHandler(async (req, res) => {
   // TODO: Get the channel stats like total video views, total subscribers, total videos, total likes etc.
@@ -94,10 +94,10 @@ const getChannelStats = asyncHandler(async (req, res) => {
   ]);
 
   if (!allStats || allStats.length === 0)
-    throw new apiError(404, "Channel stats not found");
+    throw new ApiError(404, "Channel stats not found");
 
   res.json(
-    new apiResponse(200, allStats[0], "Channel stats fetched successfully")
+    new ApiResponse(200, allStats[0], "Channel stats fetched successfully")
   );
 });
 

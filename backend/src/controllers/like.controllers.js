@@ -4,17 +4,17 @@ import { Video } from "../models/video.model.js";
 import { Comment } from "../models/comment.model.js";
 import { Tweet } from "../models/tweet.model.js";
 import { Like } from "../models/like.model.js";
-import apiError from "../utils/apiError.js";
-import apiResponse from "../utils/apiResponse.js";
+import ApiError from "../utils/apiError.js";
+import ApiResponse from "../utils/apiResponse.js";
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   //TODO: toggle like on video
   if (!videoId || !isValidObjectId(videoId))
-    throw new apiError(400, "Invalid Video Id");
+    throw new ApiError(400, "Invalid Video Id");
 
   const video = await Video.findById(videoId);
-  if (!video) throw new apiError(404, "Video not found");
+  if (!video) throw new ApiError(404, "Video not found");
 
   const isLiked = await Like.findOne({
     video: videoId,
@@ -24,14 +24,14 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
   try {
     if (isLiked) {
       await Like.findByIdAndDelete(isLiked._id);
-      res.json(new apiResponse(200, {}, "Like removed successfully"));
+      res.json(new ApiResponse(200, {}, "Like removed successfully"));
     } else {
       await Like.create({
         video: videoId,
         likedBy: req.user._id,
       });
       res.json(
-        new apiResponse(
+        new ApiResponse(
           200,
           { userId: req.user._id },
           "Like added successfully"
@@ -39,7 +39,7 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
       );
     }
   } catch (error) {
-    throw new apiError(500, "Error while toggle Like");
+    throw new ApiError(500, "Error while toggle Like");
   }
 });
 
@@ -47,10 +47,10 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
   const { commentId } = req.params;
   //TODO: toggle like on comment
   if (!commentId || !isValidObjectId(commentId))
-    throw new apiError(400, "Invalid Video Id");
+    throw new ApiError(400, "Invalid Video Id");
 
   const comment = await Comment.findById(commentId);
-  if (!comment) throw new apiError(404, "comment not found");
+  if (!comment) throw new ApiError(404, "comment not found");
 
   const isLiked = await Like.findOne({
     comment: commentId,
@@ -60,14 +60,14 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
   try {
     if (isLiked) {
       await Like.findByIdAndDelete(isLiked._id);
-      res.json(new apiResponse(200, {}, "Like removed successfully"));
+      res.json(new ApiResponse(200, {}, "Like removed successfully"));
     } else {
       await Like.create({
         comment: commentId,
         likedBy: req.user._id,
       });
       res.json(
-        new apiResponse(
+        new ApiResponse(
           200,
           { userId: req.user._id },
           "Like added successfully"
@@ -75,7 +75,7 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
       );
     }
   } catch (error) {
-    throw new apiError(500, "Error while toggle Like");
+    throw new ApiError(500, "Error while toggle Like");
   }
 });
 
@@ -83,10 +83,10 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
   const { tweetId } = req.params;
   //TODO: toggle like on tweet
   if (!tweetId || !isValidObjectId(tweetId))
-    throw new apiError(400, "Invalid Video Id");
+    throw new ApiError(400, "Invalid Video Id");
 
   const tweet = await Tweet.findById(tweetId);
-  if (!tweet) throw new apiError(404, "tweet not found");
+  if (!tweet) throw new ApiError(404, "tweet not found");
 
   const isLiked = await Like.findOne({
     tweet: tweetId,
@@ -96,14 +96,14 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
   try {
     if (isLiked) {
       await Like.findByIdAndDelete(isLiked._id);
-      res.json(new apiResponse(200, {}, "Like removed successfully"));
+      res.json(new ApiResponse(200, {}, "Like removed successfully"));
     } else {
       await Like.create({
         tweet: tweetId,
         likedBy: req.user._id,
       });
       res.json(
-        new apiResponse(
+        new ApiResponse(
           200,
           { userId: req.user._id },
           "Like added successfully"
@@ -111,7 +111,7 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
       );
     }
   } catch (error) {
-    throw new apiError(500, "Error while toggle Like");
+    throw new ApiError(500, "Error while toggle Like");
   }
 });
 
@@ -160,7 +160,7 @@ const getLikedVideos = asyncHandler(async (req, res) => {
   // TODO: check for multiple videos
 
   res.json(
-    new apiResponse(200, likedVideos, "Liked videos fetched successfully")
+    new ApiResponse(200, likedVideos, "Liked videos fetched successfully")
   );
 });
 

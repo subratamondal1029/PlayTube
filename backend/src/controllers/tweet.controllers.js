@@ -1,6 +1,6 @@
 import asyncHandler from "../utils/asyncHandler.js";
-import apiResponse from "../utils/apiResponse.js";
-import apiError from "../utils/apiError.js";
+import ApiResponse from "../utils/apiResponse.js";
+import ApiError from "../utils/apiError.js";
 import { Tweet } from "../models/tweet.model.js";
 import { Types, isValidObjectId } from "mongoose";
 
@@ -8,18 +8,18 @@ const createTweet = asyncHandler(async (req, res) => {
   // TODO: create tweet
   const { content } = req.body;
 
-  if (!content) throw new apiError(400, "content is required");
+  if (!content) throw new ApiError(400, "content is required");
 
   const tweet = await Tweet.create({
     content,
     owner: req.user._id,
   });
 
-  if (!tweet) throw new apiError(500, "Error while creating tweet");
+  if (!tweet) throw new ApiError(500, "Error while creating tweet");
 
   res
     .status(201)
-    .json(new apiResponse(201, tweet, "Tweet created successfully"));
+    .json(new ApiResponse(201, tweet, "Tweet created successfully"));
 });
 
 const getUserTweets = asyncHandler(async (req, res) => {
@@ -27,7 +27,7 @@ const getUserTweets = asyncHandler(async (req, res) => {
   const { userId } = req.params;
 
   if (!userId || !isValidObjectId(userId))
-    throw new apiError(400, "user id is invalid");
+    throw new ApiError(400, "user id is invalid");
 
   const tweet = await Tweet.aggregate([
     {
@@ -84,9 +84,9 @@ const getUserTweets = asyncHandler(async (req, res) => {
     },
   ]);
 
-  if (!tweet) throw new apiError(404, "Tweet Not found");
+  if (!tweet) throw new ApiError(404, "Tweet Not found");
 
-  res.json(new apiResponse(200, tweet[0], "Tweet Fetched successfully"));
+  res.json(new ApiResponse(200, tweet[0], "Tweet Fetched successfully"));
 });
 
 const updateTweet = asyncHandler(async (req, res) => {
@@ -94,39 +94,39 @@ const updateTweet = asyncHandler(async (req, res) => {
   const { tweetId } = req.params;
   const { content } = req.body;
 
-  if (!tweetId || !content) throw new apiError(400, "All Fields Are required");
+  if (!tweetId || !content) throw new ApiError(400, "All Fields Are required");
 
   const tweet = await Tweet.findById(tweetId);
-  if (!tweet) throw new apiError(404, "Tweet Not Found");
+  if (!tweet) throw new ApiError(404, "Tweet Not Found");
   if (tweet.owner.toString() !== req.user._id.toString())
-    throw new apiError(403, "Unauthorized");
+    throw new ApiError(403, "Unauthorized");
 
   tweet.content = content;
   tweet.save({ validateBeforeSave: false });
 
   console.log(tweet);
 
-  res.json(new apiResponse(200, tweet, "tweet Updated Successfully"));
+  res.json(new ApiResponse(200, tweet, "tweet Updated Successfully"));
 });
 
 const deleteTweet = asyncHandler(async (req, res) => {
   //TODO: delete tweet
   const { tweetId } = req.params;
 
-  if (!tweetId) throw new apiError(400, "tweet id is required");
+  if (!tweetId) throw new ApiError(400, "tweet id is required");
   const isValidId = isValidObjectId(tweetId);
 
-  if (!isValidId) throw new apiError(400, "Invalid tweet id");
+  if (!isValidId) throw new ApiError(400, "Invalid tweet id");
 
   const tweet = await Tweet.findById(tweetId);
 
-  if (!tweet) throw new apiError(404, "Tweet Not found");
+  if (!tweet) throw new ApiError(404, "Tweet Not found");
   if (tweet.owner.toString() !== req.user._id.toString())
-    throw new apiError(403, "Unauthorized");
+    throw new ApiError(403, "Unauthorized");
 
   await Tweet.deleteOne({ _id: tweetId });
 
-  res.json(new apiResponse(200, {}, "Tweet deleted successfully"));
+  res.json(new ApiResponse(200, {}, "Tweet deleted successfully"));
 });
 
 export { createTweet, getUserTweets, updateTweet, deleteTweet };

@@ -1,12 +1,12 @@
-import apiError from "../utils/apiError.js";
+import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { Subscription } from "../models/subscription.model.js";
-import apiResponse from "../utils/apiResponse.js";
+import ApiResponse from "../utils/apiResponse.js";
 
 const subscribeChannel = asyncHandler(async (req, res) => {
   const channelId = String(req.params.channelId);
 
-  if (!channelId) throw new apiError(400, "channel id is required");
+  if (!channelId) throw new ApiError(400, "channel id is required");
 
   const isSubscribed = await Subscription.findOne({
     channel: channelId,
@@ -14,7 +14,7 @@ const subscribeChannel = asyncHandler(async (req, res) => {
   });
 
   if (isSubscribed) {
-    throw new apiError(409, "Already subscribed");
+    throw new ApiError(409, "Already subscribed");
   }
 
   const subscription = await Subscription.create({
@@ -23,7 +23,7 @@ const subscribeChannel = asyncHandler(async (req, res) => {
   });
 
   res.status(201).json(
-    new apiResponse(
+    new ApiResponse(
       201,
       {
         channel: subscription.channel,
@@ -37,16 +37,16 @@ const subscribeChannel = asyncHandler(async (req, res) => {
 const unsubscribeChannel = asyncHandler(async (req, res) => {
   const channelId = String(req.params.channelId);
 
-  if (!channelId) throw new apiError(400, "channel id is required");
+  if (!channelId) throw new ApiError(400, "channel id is required");
 
   const unsubscribed = await Subscription.findOneAndDelete({
     channel: channelId,
     subscriber: req.user._id,
   });
 
-  if (!unsubscribed) throw new apiError(404, "Subscription not found");
+  if (!unsubscribed) throw new ApiError(404, "Subscription not found");
 
-  res.json(new apiResponse(200, {}, "unsubscribed successfully!"));
+  res.json(new ApiResponse(200, {}, "unsubscribed successfully!"));
 });
 
 export { subscribeChannel, unsubscribeChannel };

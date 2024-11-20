@@ -1,4 +1,4 @@
-import apiError from "./apiError.js";
+import ApiError from "./apiError.js";
 
 // const asyncHandler = (fn) => async (req, res, next) => {
 //   try {
@@ -12,7 +12,7 @@ import apiError from "./apiError.js";
 
 const asyncHandler = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch((err) => {
-    const error = new apiError(
+    const error = new ApiError(
       err.statusCode,
       err.message || "Internal Server Error"
     );
