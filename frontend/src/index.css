@@ -30,3 +30,7 @@ a {
   text-decoration: none;
   color: var(--default-color);
 }
+
+.loader {
+  margin-inline: auto;
+}

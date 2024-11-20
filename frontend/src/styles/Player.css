@@ -180,6 +180,14 @@
   margin-top: 10px;
 }
 
+.descriptionContainer .videoDescription.hide {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .descriptionContainer .channelDetails {
   margin-top: 30px;
   display: grid;
@@ -202,3 +210,6 @@
   background-color: #3a3a3a;
   color: var(--default-color);
 }
+
+/* .player{
+} */

@@ -36,3 +36,8 @@
     left: 150%;
   }
 }
+
+.error {
+  color: rgb(219, 63, 63);
+  margin-top: 6px;
+}

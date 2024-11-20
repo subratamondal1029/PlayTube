@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { defineNavVisibelity } from "../store/slices/slideSlice";
 import "../styles/Player.css";
-import { Avatar } from "@mui/material";
+import { Avatar, CircularProgress } from "@mui/material";
 import {
   ThumbUpAltOutlined,
   ReplyOutlined,
@@ -18,29 +18,40 @@ const Player = () => {
   const { id } = useParams();
   const dispath = useDispatch();
   const [videoDetails, setVideoDetails] = useState({});
-  const [commentPosition, setCommentPosition] = useState(window.innerHeight);
+  const [expendDescription, setExpendDescription] = useState(false);
+  let currentCommentPage = 1;
   const [comments, setComments] = useState([]);
+  const commentLoaderRef = useRef(null);
 
-  const handleCommentPosition = (e) => {
-    console.log(e.target);
-  };
-
-  const fetchVideoComments = async () => {
+  const fetchVideoComments = async (page) => {
     try {
-      const comments = await commentService.getVideoComments(id);
-      console.log(comments);
-
-      setComments(comments);
+      const comments = await commentService.getVideoComments(id, page);
+      setComments((prev) => [...prev, ...comments]);
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const handleCommentPosition = async () => {
+    const rect = commentLoaderRef.current?.getBoundingClientRect();
+    const commentPosition = window.innerHeight - rect?.top;
+    const maxPage = Math.ceil(videoDetails.commentCount / 10);
+
+    if (commentPosition >= 10) {
+      if (currentCommentPage <= maxPage) {
+        window.removeEventListener("scroll", handleCommentPosition);
+        await fetchVideoComments(currentCommentPage);
+        currentCommentPage + 1;
+        window.addEventListener("scroll", handleCommentPosition);
+      } else {
+        window.removeEventListener("scroll", handleCommentPosition);
+      }
     }
   };
 
   async function fetchVideoDetails() {
     try {
       const videoDetails = await videoService.getVideo(id);
-      console.log(videoDetails);
-
       setVideoDetails(videoDetails);
     } catch (error) {
       console.error(error);
@@ -48,10 +59,15 @@ const Player = () => {
   }
   useEffect(() => {
     dispath(defineNavVisibelity(false));
-
     fetchVideoDetails();
-    fetchVideoComments(); //TODO: Make this when comment scroll to bottom
   }, []);
+
+  useEffect(() => {
+    if (Object.keys(videoDetails).length !== 0) {
+      window.addEventListener("scroll", handleCommentPosition);
+    }
+    return () => window.removeEventListener("scroll", handleCommentPosition);
+  }, [videoDetails]);
 
   return (
     <div className="container">
@@ -74,8 +90,9 @@ const Player = () => {
               >
                 {videoDetails?.owner?.fullName}
               </Link>
-              <div className="subscribers">100k Subscribers</div>{" "}
-              {/* TODO: add Subscribers data from backend */}
+              <div className="subscribers">
+                {videoDetails?.owner?.subscriberCount} Subscribers
+              </div>{" "}
             </div>
             <button className="subscribeBtn">Subscribe</button>
           </div>
@@ -101,13 +118,11 @@ const Player = () => {
               {timeSince(videoDetails?.createdAt)}
             </div>
           </div>
-          <div className="videoDescription">
-            {" "}
-            {/* TODO: add video description height toggle */}
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui, vero.
-            Totam, ducimus natus rem explicabo nesciunt non soluta
-            necessitatibus quas tempore nulla provident veritatis eum aperiam
-            dolor. Facere, aliquam quos.
+          <div
+            className={`videoDescription ${expendDescription ? "" : "hide"}`}
+            onClick={() => setExpendDescription((prev) => !prev)}
+          >
+            {videoDetails?.description}
           </div>
 
           <div className="channelDetails">
@@ -126,7 +141,7 @@ const Player = () => {
                 {videoDetails?.owner?.fullName}
               </Link>
               <div className="subscribers">
-                {videoDetails?.owner?.subscriberCount || "null"} Subscribers
+                {videoDetails?.owner?.subscriberCount} Subscribers
               </div>
             </div>
             <div></div>
@@ -138,7 +153,17 @@ const Player = () => {
             </Link>
           </div>
         </div>
-        <Comment videoId={id} comments={comments} setComments={setComments} />
+        {comments.length !== 0 && (
+          <Comment
+            videoId={id}
+            comments={comments}
+            setComments={setComments}
+            totalComments={videoDetails?.commentCount}
+          />
+        )}
+        {comments.length < videoDetails.commentCount && (
+          <CircularProgress ref={commentLoaderRef} className="loader" />
+        )}
       </div>
       <div className="relatedContainer">
         <RelatedVideoCard />

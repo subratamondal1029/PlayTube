@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 import "../styles/Comment.css";
 import {
   MoreVertOutlined,
@@ -11,12 +11,18 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { commentService } from "../backendServices";
 
-const Comment = ({ comments = [], setComments, videoId }) => {
+const Comment = ({
+  comments = [],
+  setComments,
+  videoId,
+  totalComments = 0,
+}) => {
   const userData = useSelector((state) => state.auth.userData);
   const [showSort, setShowSort] = useState(false);
   const [addComment, setAddComment] = useState("");
-  const [isCommentUpdatable, setIsCommentUpdatable] = useState(false);
+  const [updateCommentId, setUpdateCommentId] = useState(null);
   const [showCommentControl, setShowCommentControl] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const navigateUserProfile = (username) => {
@@ -34,38 +40,49 @@ const Comment = ({ comments = [], setComments, videoId }) => {
     }
   };
 
-  const handleCommentSubmit = async (commentId) => {
+  const handleCommentSubmit = async () => {
     try {
-      if (!isCommentUpdatable) {
+      if (!updateCommentId) {
         const comment = await commentService.addComment(
           videoId,
           null,
           addComment
         );
-        setComments((prev) => [...prev, comment]);
+        setComments((prev) => [
+          {
+            ...comment,
+            owner: {
+              username: userData.username,
+              avatar: userData.avatar,
+            },
+            totalLikes: 0,
+          },
+          ...prev,
+        ]);
         setAddComment("");
       } else {
         const comment = await commentService.updateComment(
-          commentId,
+          updateCommentId,
           addComment
         );
         setComments((prev) =>
           prev.map((c) =>
-            c._id === commentId ? { ...c, content: addComment } : c
+            c._id === updateCommentId ? { ...c, content: addComment } : c
           )
         );
         setAddComment("");
-        setIsCommentUpdatable(false);
+        setUpdateCommentId(null);
       }
     } catch (error) {
       console.error(error);
+      setError(error);
     }
   };
 
   return (
     <div className="commentContainer">
       <div className="commentSort">
-        <h2>{0} Comments</h2>
+        <h2>{totalComments} Comments</h2>
         <div className="sort">
           <span onClick={() => setShowSort(!showSort)}>
             <SortOutlined fontSize="large" /> Sort by
@@ -88,27 +105,34 @@ const Comment = ({ comments = [], setComments, videoId }) => {
             onChange={(e) => setAddComment(e.target.value)}
             value={addComment}
             onFocus={() => setShowCommentControl(true)}
+            onKeyDown={(e) => {
+              if (addComment && e.key === "Enter" && e.ctrlKey) {
+                handleCommentSubmit();
+              }
+            }}
           />
+          <p className="error">{error}</p>
           {showCommentControl && (
             <div className="commentBtns">
               <button
                 onClick={() => {
                   setShowCommentControl(false);
-                  setIsCommentUpdatable(false);
+                  setUpdateCommentId(null);
                   setAddComment("");
+                  setError("");
                 }}
               >
                 Cancel
               </button>
-              <button disabled={!addComment}>
-                {isCommentUpdatable ? "Update" : "Comment"}
+              <button disabled={!addComment} onClick={handleCommentSubmit}>
+                {updateCommentId ? "Update" : "Comment"}
               </button>
             </div>
           )}
         </div>
       </div>
       <div className="commentBox">
-        {comments.map((comment, index) => (
+        {comments.map((comment) => (
           <div className="comment" key={comment._id}>
             <Avatar
               src={comment.owner?.avatar}
@@ -144,7 +168,7 @@ const Comment = ({ comments = [], setComments, videoId }) => {
                 <div className="options hide">
                   <span
                     onClick={(e) => {
-                      setIsCommentUpdatable(true);
+                      setUpdateCommentId(comment._id);
                       setAddComment(comment.content);
                       setShowCommentControl(true);
                       e.target.parentElement.classList.add("hide");
