@@ -8,28 +8,59 @@ import {
 import { Avatar } from "@mui/material";
 import { timeSince } from "../utiles";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { commentService } from "../backendServices";
 
-const Comment = ({ comments = [] }) => {
+const Comment = ({ comments = [], setComments, videoId }) => {
   const userData = useSelector((state) => state.auth.userData);
   const [showSort, setShowSort] = useState(false);
   const [addComment, setAddComment] = useState("");
+  const [isCommentUpdatable, setIsCommentUpdatable] = useState(false);
   const [showCommentControl, setShowCommentControl] = useState(false);
+  const navigate = useNavigate();
 
-  const commentRef = useRef([]);
-  const [readMoreVisibility, setReadMoreVisibility] = useState([]);
+  const navigateUserProfile = (username) => {
+    navigate(`/users/${username}`);
+  };
 
-  useEffect(() => {
-    const readMoreVisibility = commentRef.current.map((_, index) => {
-      const isHidden =
-        getComputedStyle(commentRef.current[index]).getPropertyValue(
-          "height"
-        ) === "95px";
+  const deleteComment = async (commentId) => {
+    try {
+      await commentService.deleteComment(commentId);
+      setComments((prev) =>
+        prev.filter((comment) => comment._id !== commentId)
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-      return isHidden;
-    });
-
-    setReadMoreVisibility(readMoreVisibility);
-  }, [comments]);
+  const handleCommentSubmit = async (commentId) => {
+    try {
+      if (!isCommentUpdatable) {
+        const comment = await commentService.addComment(
+          videoId,
+          null,
+          addComment
+        );
+        setComments((prev) => [...prev, comment]);
+        setAddComment("");
+      } else {
+        const comment = await commentService.updateComment(
+          commentId,
+          addComment
+        );
+        setComments((prev) =>
+          prev.map((c) =>
+            c._id === commentId ? { ...c, content: addComment } : c
+          )
+        );
+        setAddComment("");
+        setIsCommentUpdatable(false);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="commentContainer">
@@ -49,7 +80,7 @@ const Comment = ({ comments = [] }) => {
       </div>
 
       <div className="commentInputContainer">
-        <Avatar src="" alt="" />
+        <Avatar src={userData?.avatar} />
         <div className="inputField">
           <input
             type="text"
@@ -60,10 +91,18 @@ const Comment = ({ comments = [] }) => {
           />
           {showCommentControl && (
             <div className="commentBtns">
-              <button onClick={() => setShowCommentControl(false)}>
+              <button
+                onClick={() => {
+                  setShowCommentControl(false);
+                  setIsCommentUpdatable(false);
+                  setAddComment("");
+                }}
+              >
                 Cancel
               </button>
-              <button disabled={!addComment}>Comment</button>
+              <button disabled={!addComment}>
+                {isCommentUpdatable ? "Update" : "Comment"}
+              </button>
             </div>
           )}
         </div>
@@ -71,40 +110,51 @@ const Comment = ({ comments = [] }) => {
       <div className="commentBox">
         {comments.map((comment, index) => (
           <div className="comment" key={comment._id}>
-            <Avatar src="" alt="" />
+            <Avatar
+              src={comment.owner?.avatar}
+              alt={comment.owner?.username}
+              onClick={() => navigateUserProfile(comment.owner?.username)}
+              className="commentAvatar"
+            />
             <div className="commentDetails">
               <div className="commentUploadDetails">
-                <span className="username">@subrata</span>
+                <span className="username">@{comment.owner?.username}</span>
                 <span className="uploadTime">
                   {timeSince(comment.createdAt)}
                 </span>
               </div>
               <p
-                className={`commentText ${comment?.hide ? "hide" : ""}`}
-                ref={(e) => (commentRef.current[index] = e)}
+                className="commentText hide"
+                onClick={(e) => e.target.classList.toggle("hide")}
               >
                 {comment.content}
               </p>
-              {readMoreVisibility[index] && (
-                <span
-                  className="readMoreBtn"
-                  onClick={() =>
-                    setComments((prev) =>
-                      prev.map((c) =>
-                        c._id === comment._id ? { ...c, hide: !c.hide } : c
-                      )
-                    )
-                  }
-                >
-                  {comment?.hide ? "Read More" : "Read Less"}
-                </span>
-              )}
               <button className="commentLike">
-                <ThumbUpAltOutlined fontSize="small" />
+                <ThumbUpAltOutlined fontSize="small" /> {comment.totalLikes}
               </button>
             </div>
             {comment.owner?.username === userData.username && (
-              <MoreVertOutlined fontSize="small" className="moreOptions" />
+              <div className="moreOptions">
+                <MoreVertOutlined
+                  fontSize="small"
+                  onClick={(e) => {
+                    e.target.nextElementSibling.classList.toggle("hide");
+                  }}
+                />
+                <div className="options hide">
+                  <span
+                    onClick={(e) => {
+                      setIsCommentUpdatable(true);
+                      setAddComment(comment.content);
+                      setShowCommentControl(true);
+                      e.target.parentElement.classList.add("hide");
+                    }}
+                  >
+                    Edit
+                  </span>
+                  <span onClick={() => deleteComment(comment._id)}>Delete</span>
+                </div>
+              </div>
             )}
           </div>
         ))}

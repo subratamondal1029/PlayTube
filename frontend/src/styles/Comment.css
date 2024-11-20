@@ -147,6 +147,10 @@
   font-size: 16px;
 }
 
+.comment .commentAvatar {
+  cursor: pointer;
+}
+
 .commentUploadDetails .uploadTime {
   font-size: 14px;
   color: #969696;
@@ -155,6 +159,7 @@
 .comment .commentText {
   height: auto;
   margin-top: 5px;
+  cursor: pointer;
 }
 
 .comment .commentText.hide {
@@ -165,16 +170,6 @@
   text-overflow: ellipsis;
 }
 
-.comment .readMoreBtn {
-  cursor: pointer;
-  color: #464645;
-  line-height: 35px;
-}
-
-.comment .readMoreBtn:hover {
-  text-decoration: underline;
-}
-
 .comment .commentLike {
   margin-top: 10px;
   cursor: pointer;
@@ -182,6 +177,10 @@
   border: none;
   padding: 4px;
   color: var(--default-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
 }
 
 .comment .commentLike:hover {
@@ -192,4 +191,28 @@
 .comment .moreOptions {
   margin-left: auto;
   cursor: pointer;
+}
+
+.moreOptions .options {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: #272727;
+  border-radius: 12px;
+  font-size: 17px;
+}
+
+.moreOptions .options span {
+  padding: 16px 20px;
+  border-radius: 12px;
+}
+
+.moreOptions .options span:hover {
+  background-color: #353535;
+}
+
+.moreOptions .options.hide {
+  display: none;
 }
