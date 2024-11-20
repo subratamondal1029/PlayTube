@@ -151,16 +151,21 @@ const getVideoById = asyncHandler(async (req, res) => {
               foreignField: "channel",
               as: "subscribers",
             },
+          },
+          {
             $addFields: {
               subscriberCount: {
                 $size: "$subscribers",
               },
             },
+          },
+          {
             $project: {
-              subscribers: 0,
+              _id: 0,
               fullName: 1,
               username: 1,
               avatar: 1,
+              subscriberCount: 1,
             },
           },
         ],
