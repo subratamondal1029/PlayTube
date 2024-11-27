@@ -25,6 +25,12 @@ const options = {
   secure: true,
 };
 
+const calculateExpiryTime = (days) => {
+  days = Number(days.split("d")[0]);
+  const now = Math.floor(new Date() / 1000);
+  return now + days * 24 * 60 * 60;
+};
+
 const registerUser = asyncHandler(async (req, res) => {
   // get user details
   const { fullName, username, email, password } = req.body;
@@ -100,12 +106,6 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
-  const calculateExpiryTime = (days) => {
-    days = Number(days.split("d")[0]);
-    const now = Math.floor(new Date() / 1000);
-    return now + days * 24 * 60 * 60;
-  };
-
   if (!username && !email) {
     throw new ApiError(400, "username or email is required");
   }
@@ -137,11 +137,11 @@ const loginUser = asyncHandler(async (req, res) => {
   return res
     .cookie("accessToken", accessToken, {
       ...options,
-      expire: calculateExpiryTime(accessTokenExpiry),
+      maxAge: calculateExpiryTime(accessTokenExpiry),
     })
     .cookie("refreshToken", refreshToken, {
       ...options,
-      expire: calculateExpiryTime(refreshAccessTokenExpiry),
+      maxAge: calculateExpiryTime(refreshAccessTokenExpiry),
     })
     .json(
       new ApiResponse(
@@ -194,11 +194,11 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     .status(201)
     .cookie("accessToken", accessToken, {
       ...options,
-      expire: calculateExpiryTime(accessTokenExpiry),
+      maxAge: calculateExpiryTime(accessTokenExpiry),
     })
     .cookie("refreshToken", refreshToken, {
       ...options,
-      expire: calculateExpiryTime(refreshAccessTokenExpiry),
+      maxAge: calculateExpiryTime(refreshAccessTokenExpiry),
     })
     .send(
       new ApiResponse(
