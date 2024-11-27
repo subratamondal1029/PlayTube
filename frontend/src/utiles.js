@@ -23,7 +23,7 @@ function timeSince(uploadDate) {
 function getDuration(videoDuration) {
   const hours = Math.floor(videoDuration / 3600);
   const minutes = Math.floor((videoDuration % 3600) / 60);
-  const seconds = Math.round(videoDuration % 60);
+  const seconds = Math.floor(videoDuration % 60);
 
   if (hours > 0) {
     return `${hours}:${minutes < 10 ? "0" : ""}${minutes}:${

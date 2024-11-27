@@ -9,7 +9,7 @@ const VideoList = ({ cardNumbers = 3, videos = [], simmer = true }) => {
       style={{ gridTemplateColumns: `repeat(${cardNumbers}, 1fr)` }}
     >
       {simmer ? (
-        Array.from({ length: 10 }).map(() => <VideoCardSimmer />)
+        Array.from({ length: 10 }).map((_, i) => <VideoCardSimmer key={i} />)
       ) : videos.length > 0 ? (
         videos.map((video) => <VideoCard video={video} key={video._id} />)
       ) : (
