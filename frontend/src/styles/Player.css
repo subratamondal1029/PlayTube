@@ -82,6 +82,16 @@
   color: var(--base-color);
 }
 
+.channelDetails .subscribeBtn.subscribed {
+  background-color: #262626;
+  box-shadow: inset 0px 0px 5px 4px rgba(34, 34, 34, 0.432);
+}
+
+.channelDetails .subscribeBtn.subscribed:hover {
+  color: var(--default-color);
+  background-color: #363636;
+}
+
 .videoControllers {
   width: 100%;
   display: flex;
@@ -275,4 +285,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.player .extraMouseControl > div {
+  width: 100%;
+  height: 100%;
 }

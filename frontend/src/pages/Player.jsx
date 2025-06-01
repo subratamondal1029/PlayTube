@@ -31,7 +31,7 @@ const Player = () => {
   const dispath = useDispatch();
   const [videoDetails, setVideoDetails] = useState({});
   const [expendDescription, setExpendDescription] = useState(false);
-  let currentCommentPage = 1;
+  let currentCommentPage = useRef(1);
   const [comments, setComments] = useState([]);
   const commentLoaderRef = useRef(null);
   const [isVideoControlOpen, setIsVideoControlOpen] = useState(true);
@@ -63,10 +63,10 @@ const Player = () => {
     const maxPage = Math.ceil(videoDetails.commentCount / 10);
 
     if (commentPosition >= 10) {
-      if (currentCommentPage <= maxPage) {
+      if (currentCommentPage.current <= maxPage) {
         window.removeEventListener("scroll", handleCommentPosition);
-        await fetchVideoComments(currentCommentPage);
-        currentCommentPage + 1;
+        await fetchVideoComments(currentCommentPage.current);
+        currentCommentPage.current += 1;
         window.addEventListener("scroll", handleCommentPosition);
       } else {
         window.removeEventListener("scroll", handleCommentPosition);
@@ -114,12 +114,10 @@ const Player = () => {
     });
   };
 
-  const handleTimeStampChange = (e) => setVideoTimeStamp(e.target.currentTime);
-
   const requestToFullScreenMode = (isOpen) => {
     const player = videoRef.current.parentElement;
 
-    if (isOpen) {
+    if (isOpen && !document.fullscreenElement) {
       if (player.requestFullscreen) {
         player.requestFullscreen();
       } else if (player.webkitRequestFullscreen) {
@@ -129,7 +127,7 @@ const Player = () => {
         /* IE11 */
         player.msRequestFullscreen();
       }
-    } else {
+    } else if (!isOpen && document.fullscreenElement) {
       if (document.exitFullscreen) {
         document.exitFullscreen();
       } else if (document.webkitExitFullscreen) {
@@ -144,19 +142,50 @@ const Player = () => {
 
   const requestToPictureInPictureMode = (isOpen) => {
     const videoElm = videoRef.current;
-    if (isOpen) {
+
+    if (isOpen && !document.pictureInPictureElement) {
       if (videoElm.requestPictureInPicture) {
         videoElm.requestPictureInPicture();
       }
-    } else {
+    } else if (!isOpen && document.pictureInPictureElement) {
       document.exitPictureInPicture();
+    }
+  };
+
+  const handlePlayerKeyboardEvent = (e) => {
+    let key = e.key;
+
+    switch (key) {
+      case " ":
+        e.preventDefault();
+        setVideoControls((prev) => ({ ...prev, isPause: !prev.isPause }));
+        break;
+      case "m":
+        setVideoControls((prev) => ({ ...prev, isMute: !prev.isMute }));
+        break;
+      case "f":
+        setVideoControls((prev) => ({
+          ...prev,
+          inFullScreen: !prev.inFullScreen,
+        }));
+        break;
+      case "t":
+        setVideoControls((prev) => ({
+          ...prev,
+          inTheaterMode: !prev.inTheaterMode,
+        }));
+        break;
+      default:
+        break;
     }
   };
 
   useEffect(() => {
     dispath(defineNavVisibelity(false));
     fetchVideoDetails();
-    videoRef.current.addEventListener("timeupdate", handleTimeStampChange);
+    videoRef.current.addEventListener("timeupdate", (e) =>
+      setVideoTimeStamp(e.target.currentTime)
+    );
     initRootEventListener();
   }, []);
 
@@ -164,7 +193,15 @@ const Player = () => {
     if (Object.keys(videoDetails).length !== 0) {
       window.addEventListener("scroll", handleCommentPosition);
     }
-    return () => window.removeEventListener("scroll", handleCommentPosition);
+
+    if (videoRef.current) {
+      document.addEventListener("keydown", handlePlayerKeyboardEvent);
+    }
+
+    return () => {
+      window.removeEventListener("scroll", handleCommentPosition);
+      document.removeEventListener("keydown", handlePlayerKeyboardEvent);
+    };
   }, [videoDetails]);
 
   useEffect(() => {
@@ -183,6 +220,9 @@ const Player = () => {
       } else {
         videoElm.muted = false;
       }
+
+      requestToFullScreenMode(videoControls.inFullScreen);
+      requestToPictureInPictureMode(videoControls.pictureInpicture);
     }
   }, [videoControls]);
 
@@ -200,15 +240,13 @@ const Player = () => {
             <div className="videoControlsContainer">
               <div
                 className="extraMouseControl"
-                onClick={() =>
+                onClick={(e) => {
+                  console.log("time Stamp: ", e.timeStamp);
+                  // TODO: add player timestamp skiping
                   setVideoControls((prev) => ({
                     ...prev,
                     isPause: !prev.isPause,
-                  }))
-                }
-                onDoubleClick={(e) => {
-                  e.stopPropagation();
-                  console.log(e.clientX);
+                  }));
                 }}
               ></div>
               <input
@@ -271,9 +309,10 @@ const Player = () => {
                   <div
                     className="pictureInPicture"
                     onClick={() =>
-                      requestToPictureInPictureMode(
-                        !videoControls.pictureInpicture
-                      )
+                      setVideoControls((prev) => ({
+                        ...prev,
+                        pictureInpicture: !prev.pictureInpicture,
+                      }))
                     }
                   >
                     {videoControls.pictureInpicture ? (
@@ -300,7 +339,10 @@ const Player = () => {
                   <div
                     className="fullScreen"
                     onClick={() =>
-                      requestToFullScreenMode(!videoControls.inFullScreen)
+                      setVideoControls((prev) => ({
+                        ...prev,
+                        inFullScreen: !prev.inFullScreen,
+                      }))
                     }
                   >
                     {videoControls.inFullScreen ? (
@@ -323,7 +365,11 @@ const Player = () => {
               setVideoControls((prev) => ({ ...prev, isPause: false }))
             }
             onPause={() =>
-              setVideoControls((prev) => ({ ...prev, isPause: true }))
+              setVideoControls((prev) => ({
+                ...prev,
+                isPause: true,
+                isEnd: false,
+              }))
             }
             onEnded={() =>
               setVideoControls((prev) => ({ ...prev, isEnd: !prev.isEnd }))
@@ -351,7 +397,13 @@ const Player = () => {
                 {videoDetails?.owner?.subscriberCount} Subscribers
               </div>{" "}
             </div>
-            <button className="subscribeBtn">Subscribe</button>
+            <button
+              className={`subscribeBtn ${
+                videoDetails.owner?.isSubscribed ? "subscribed" : ""
+              }`}
+            >
+              {videoDetails.owner?.isSubscribed ? "Subscribed" : "Subscribe"}
+            </button>
           </div>
           <div className="videoControllers">
             <div className="likeVideo videoControl">
