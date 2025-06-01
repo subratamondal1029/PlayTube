@@ -120,3 +120,4 @@ dist
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Node
 steps.txt
 /src/middlewares/log.middleware.js
+logs.txt
