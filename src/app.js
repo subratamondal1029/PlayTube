@@ -4,11 +4,11 @@ import cors from "cors";
 import userRouter from "./routes/users.routes.js";
 import channelRouter from "./routes/channel.routes.js";
 import tweetRouter from "./routes/tweet.routes.js";
-import healthcheckRouter from "./routes/healthCheck.routes.js";
 import commentRouter from "./routes/comment.routes.js";
 import likeRouter from "./routes/like.routes.js";
 import playlistRouter from "./routes/playlist.routes.js";
 import videoRouter from "./routes/video.routes.js";
+import { healthcheck } from "./controllers/healthCheck.controllers.js";
 
 const app = express();
 
@@ -19,7 +19,7 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 // Routes
-app.use("/api/v1", healthcheckRouter);
+app.use("/api/v1/health", healthcheck);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/c", channelRouter);
 app.use("/api/v1/tweet", tweetRouter);
