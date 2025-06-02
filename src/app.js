@@ -28,4 +28,4 @@ app.use("/api/v1/like", likeRouter);
 app.use("/api/v1/playlist", playlistRouter);
 app.use("/api/v1/v", videoRouter);
 
-export { app };
+export default app;
