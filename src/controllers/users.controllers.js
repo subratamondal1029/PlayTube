@@ -160,7 +160,9 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
   const clientRefreshToken =
-    req.cookies?.refreshToken || req.body?.refreshToken;
+    req.cookies?.refreshToken ||
+    req.headers?.["x-refresh-token"] ||
+    req.body?.refreshToken;
 
   if (!clientRefreshToken) throw new ApiError(401, "Unauthorized request");
 
@@ -190,11 +192,10 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       maxAge: calculateExpiryTime(refreshAccessTokenExpiry),
     })
     .send(
-      new ApiResponse(
-        200,
-        { accessToken, refreshToken },
-        "New AccessToken Created Successfully"
-      )
+      new ApiResponse(200, "New AccessToken Created Successfully", {
+        accessToken,
+        refreshToken,
+      })
     );
 });
 
