@@ -13,14 +13,14 @@ import ApiError from "./apiError.js";
 const asyncHandler = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch((err) => {
     const error = new ApiError(
-      err.statusCode,
+      err.status,
       err.message || "Internal Server Error"
     );
 
     // NOTE: for testing purpose only
     console.log(err);
 
-    res.status(error.statusCode || 500).json(error);
+    res.status(error.status || 500).json(error);
   });
 };
 

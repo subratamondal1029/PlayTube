@@ -9,6 +9,7 @@ import likeRouter from "./routes/like.routes.js";
 import playlistRouter from "./routes/playlist.routes.js";
 import videoRouter from "./routes/video.routes.js";
 import { healthcheck } from "./controllers/healthCheck.controllers.js";
+import unavailableRoute from "./middlewares/unavailableRoute.middleware.js";
 
 const app = express();
 
@@ -27,5 +28,7 @@ app.use("/api/v1/comment", commentRouter);
 app.use("/api/v1/like", likeRouter);
 app.use("/api/v1/playlist", playlistRouter);
 app.use("/api/v1/v", videoRouter);
+
+app.use(unavailableRoute);
 
 export default app;

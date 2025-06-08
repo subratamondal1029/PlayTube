@@ -1,17 +1,21 @@
+import mongoose from "mongoose";
 import ApiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import fs from "fs";
 
 const healthcheck = asyncHandler(async (req, res) => {
-  const startTime = new Date();
-  //TODO: build a healthcheck response that simply returns the OK status as json with a message
+  const db = await (await mongoose.connection.db.stats()).db;
 
-  res.json(new ApiResponse(200, "Everything is ok Here Let's Rock"));
-  const resTime = new Date() - startTime;
-  const log = `${new Date().toLocaleString("en-IN")} || ${req.ip} || ${req.headers["user-agent"]} || ${resTime}ms \n\n------------------------------------------------------------------------------------------------ \n`;
-  fs.appendFile("logs.txt", log, (err) =>
-    err ? console.log(err) : console.log("log added successfully")
-  );
+  //  TODO: add average response time calculation with log file
+
+  const data = {
+    uptime: process.uptime(),
+    db,
+    environment: process.env.NODE_ENV,
+    timeStamp: new Date(),
+  };
+
+  res.json(new ApiResponse(200, "Success", data));
 });
 
 export { healthcheck };
