@@ -83,4 +83,9 @@ userSchema.methods.generateRefreshToken = function () {
   );
 };
 
+userSchema.methods.toJSON = function () {
+  const { password, refreshToken, ...user } = this.toObject();
+  return user;
+};
+
 export const User = model("User", userSchema);

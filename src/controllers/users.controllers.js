@@ -22,7 +22,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 };
 const options = {
   httpOnly: true,
-  secure: true,
+  secure: process.env.NODE_ENV === "production",
 };
 
 const calculateExpiryTime = (days) => {
@@ -89,18 +89,9 @@ const registerUser = asyncHandler(async (req, res) => {
     coverImage: coverImage?.url || "",
   });
 
-  // Check is the created and make a response data
-  const createdUser = await User.findById(user._id).select(
-    "-password -refreshToken"
-  );
-
-  if (!createdUser) {
-    throw new ApiError(500, "Internal Server Error while user Creation");
-  }
-
   return res
     .status(201)
-    .json(new ApiResponse(201, createdUser, "User Register Successfully"));
+    .json(new ApiResponse(201, "User Register Successfully", user));
 });
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -127,9 +118,7 @@ const loginUser = asyncHandler(async (req, res) => {
     user._id
   );
 
-  const resposeUser = await User.findById(user._id).select(
-    "-password -refreshToken"
-  );
+  const responseUser = await User.findById(user._id);
 
   const accessTokenExpiry = process.env.ACCESS_TOKEN_EXPIRY;
   const refreshAccessTokenExpiry = process.env.REFRESH_TOKEN_EXPIRY;
@@ -144,11 +133,11 @@ const loginUser = asyncHandler(async (req, res) => {
       maxAge: calculateExpiryTime(refreshAccessTokenExpiry),
     })
     .json(
-      new ApiResponse(
-        200,
-        { user: resposeUser, accessToken, refreshToken },
-        "Logged In successFully"
-      )
+      new ApiResponse(200, "Logged In successFully", {
+        user: responseUser,
+        accessToken,
+        refreshToken,
+      })
     );
 });
 
@@ -210,7 +199,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 });
 
 const getCurrentUser = asyncHandler(async (req, res) =>
-  res.send(new ApiResponse(200, req.user, "current user fetched successfully"))
+  res.send(new ApiResponse(200, "Success", req.user))
 );
 
 const changePassword = asyncHandler(async (req, res) => {
@@ -226,7 +215,7 @@ const changePassword = asyncHandler(async (req, res) => {
 
   user.password = newPassword;
   user.save({ validateBeforeSave: false });
-  return res.send(new ApiResponse(200, {}, "Password changed successfully"));
+  return res.send(new ApiResponse(200, "Password changed successfully"));
 });
 
 const updateUserDetails = asyncHandler(async (req, res) => {
@@ -253,11 +242,7 @@ const updateUserDetails = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-  const { password, refreshToken, ...userDetails } = user.toObject();
-
-  res.send(
-    new ApiResponse(200, userDetails, "User details updated successfully")
-  );
+  res.send(new ApiResponse(200, "User details updated successfully", user));
 });
 
 const updatedUserAvatar = asyncHandler(async (req, res) => {
@@ -301,11 +286,7 @@ const updatedUserCoverImage = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-  const { password, refreshToken, ...userDetails } = user.toObject();
-
-  res.send(
-    new ApiResponse(200, userDetails, "User Cover Image updated successfully")
-  );
+  res.send(new ApiResponse(200, "User Cover Image updated successfully", user));
 });
 
 const channelProfileDetails = asyncHandler(async (req, res) => {
@@ -371,8 +352,8 @@ const channelProfileDetails = asyncHandler(async (req, res) => {
   return res.json(
     new ApiResponse(
       200,
-      channelDetails[0],
-      "Channel Details Fetched successfully!"
+      "Channel Details Fetched successfully!",
+      channelDetails[0]
     )
   );
 });
@@ -426,8 +407,8 @@ const userWatchHistory = asyncHandler(async (req, res) => {
   return res.json(
     new ApiResponse(
       200,
-      user[0].watchHistory,
-      "Watch History fetched successfully"
+      "Watch History fetched successfully",
+      user[0].watchHistory
     )
   );
 });
