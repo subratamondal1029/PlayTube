@@ -73,8 +73,8 @@ const registerUser = asyncHandler(async (req, res) => {
   let coverImage;
 
   if (!avatar) {
-    fs.unlinkSync(coverImageLocalPath);
-    throw new ApiError(400, "Avatar is Required");
+    if (fs.existsSync(coverImageLocalPath)) fs.unlink(coverImageLocalPath);
+    throw new ApiError(500, "Avatar upload failed");
   } else {
     coverImage = await uploadFileOnCloudinary(coverImageLocalPath);
   }
@@ -255,7 +255,7 @@ const updatedUserAvatar = asyncHandler(async (req, res) => {
   if (!cloudinaryRes?.url)
     throw new ApiError(500, "Error while uploading avatar");
 
-  await deleteCloudinaryFile(req.user.avatar); //NOTE: assignment from tutorial
+  await deleteCloudinaryFile(req.user.avatar);
   const user = await User.findByIdAndUpdate(
     req.user._id,
     {
@@ -280,7 +280,7 @@ const updatedUserCoverImage = asyncHandler(async (req, res) => {
   if (!coverImage?.url)
     throw new ApiError(500, "Error while uploading Cover Image");
 
-  await deleteCloudinaryFile(req.user.coverImage); //NOTE: assignment from tutorial
+  if (req.user.coverImage) await deleteCloudinaryFile(req.user.coverImage);
   const user = await User.findByIdAndUpdate(
     req.user._id,
     { $set: { coverImage: coverImage.url } },
@@ -401,9 +401,6 @@ const userWatchHistory = asyncHandler(async (req, res) => {
       },
     },
   ]);
-
-  // NOTE: only for testing
-  console.log("userWatchHistory:", user[0].watchHistory);
 
   return res.json(
     new ApiResponse(
