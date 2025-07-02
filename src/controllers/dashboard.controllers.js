@@ -5,10 +5,11 @@ import ApiError from "../utils/apiError.js";
 import ApiResponse from "../utils/apiResponse.js";
 
 const getChannelStats = asyncHandler(async (req, res) => {
-  // TODO: Get the channel stats like total video views, total subscribers, total videos, total likes etc.
-  const { userId = req.user._id } = req.query;
+  let { userId } = req.query;
 
-  const allStats = await User.aggregate([
+  if (!userId) userId = req.user._id;
+
+  const [allStats] = await User.aggregate([
     {
       $match: {
         _id: new Types.ObjectId(userId),
@@ -93,11 +94,10 @@ const getChannelStats = asyncHandler(async (req, res) => {
     },
   ]);
 
-  if (!allStats || allStats.length === 0)
-    throw new ApiError(404, "Channel stats not found");
+  if (!allStats) throw new ApiError(404, "Channel stats not found");
 
   res.json(
-    new ApiResponse(200, allStats[0], "Channel stats fetched successfully")
+    new ApiResponse(200, "Channel stats fetched successfully", allStats)
   );
 });
 

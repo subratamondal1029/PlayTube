@@ -19,6 +19,11 @@ import { getChannelStats } from "../controllers/dashboard.controllers.js";
 const router = Router();
 router.use(verifyJwt);
 
+router.use("/subscribe/:channelId", (_, s, next) => {
+  console.log("subscribe");
+  next();
+});
+
 router.route("/u/:username").get(channelProfileDetails);
 router.route("/dashboard").get(getChannelStats);
 router.route("/subscribe/:channelId").post(subscribeChannel);
@@ -38,7 +43,7 @@ router.route("/upload").post(
 );
 
 router.route("/toggle-publish/:videoId").patch(togglePublishStatus);
-router.route("/update/:videoId").patch(updateVideo);
+router.route("/update/:videoId").patch(upload.single("thumbnail"), updateVideo);
 router.route("/delete/:videoId").delete(deleteVideo);
 router.route("/views/:videoId").put(addViews);
 

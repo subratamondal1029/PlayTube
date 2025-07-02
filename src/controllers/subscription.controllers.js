@@ -23,14 +23,10 @@ const subscribeChannel = asyncHandler(async (req, res) => {
   });
 
   res.status(201).json(
-    new ApiResponse(
-      201,
-      {
-        channel: subscription.channel,
-        subscriber: subscription.subscriber,
-      },
-      "Subscribed successfully"
-    )
+    new ApiResponse(201, "Subscribed successfully", {
+      channel: subscription.channel,
+      subscriber: subscription.subscriber,
+    })
   );
 });
 
@@ -46,7 +42,7 @@ const unsubscribeChannel = asyncHandler(async (req, res) => {
 
   if (!unsubscribed) throw new ApiError(404, "Subscription not found");
 
-  res.json(new ApiResponse(200, {}, "unsubscribed successfully!"));
+  res.json(new ApiResponse(200, "unsubscribed successfully!"));
 });
 
 export { subscribeChannel, unsubscribeChannel };

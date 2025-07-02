@@ -13,14 +13,13 @@ import {
 } from "../utils/cloudinary.js";
 
 const getAllVideos = asyncHandler(async (req, res) => {
-  const {
-    page = 1,
-    limit = 10,
-    query = "",
-    sortBy = "createdAt",
-    sortType = "desc",
-    userId,
-  } = req.query;
+  let { page, limit, query = "", sortBy, sortType, userId } = req.query;
+
+  if (!page) page = 1;
+  if (!limit) limit = 10;
+
+  if (!sortBy?.trim()) sortBy = "createdAt";
+  if (!sortType?.trim()) sortType = "desc";
 
   const skipPage = (parseInt(page) - 1) * parseInt(limit);
 
@@ -28,14 +27,18 @@ const getAllVideos = asyncHandler(async (req, res) => {
     isPublished: true,
   };
 
-  if (userId !== "undefined" && userId !== "null") {
+  if (userId?.trim()) {
     matchStatement.owner = new Types.ObjectId(userId);
   }
-  if (query)
+  if (query) {
     matchStatement.$or = [
       { title: { $regex: query, $options: "i" } },
       { description: { $regex: query, $options: "i" } },
     ];
+  }
+
+  const totalVideos = await Video.countDocuments(matchStatement);
+  const totalPages = Math.ceil(totalVideos / parseInt(limit));
 
   const videos = await Video.aggregate([
     {
@@ -79,16 +82,20 @@ const getAllVideos = asyncHandler(async (req, res) => {
     },
   ]);
 
-  if (!videos || videos?.length === 0)
-    throw new ApiError(404, "No videos found");
-  res.json(new ApiResponse(200, videos, "Videos fetched successfully"));
+  res.json(
+    new ApiResponse(200, "Videos fetched successfully", {
+      videos,
+      totalVideos,
+      totalPages,
+      currentPage: parseInt(page),
+    })
+  );
 });
 
 const publishAVideo = asyncHandler(async (req, res) => {
   const { title, description, isPublished } = req.body;
-  // TODO: get video, upload to cloudinary, create video
   if (!title || !description)
-    throw new ApiError(400, "All Fields are required");
+    throw new ApiError(400, "Title and description are required");
 
   const uploadedFiles = req.files;
   if (
@@ -100,12 +107,21 @@ const publishAVideo = asyncHandler(async (req, res) => {
 
   const videoLocalFile = uploadedFiles.video[0].path;
   const thumbnailLocalFile = uploadedFiles?.thumbnail?.[0]?.path;
+
+  if (!uploadedFiles?.video?.[0]?.mimetype?.includes("video/"))
+    throw new ApiError(400, "Invalid video format");
+
   const video = await uploadFileOnCloudinary(videoLocalFile);
   if (!video) {
     if (thumbnailLocalFile) fs.unlinkSync(thumbnailLocalFile);
     throw new ApiError(500, "Failed to upload video");
   }
 
+  if (
+    thumbnailLocalFile &&
+    !uploadedFiles?.thumbnail?.[0]?.mimetype?.includes("image/")
+  )
+    throw new ApiError(400, "Invalid thumbnail format");
   const thumbnail = await uploadFileOnCloudinary(thumbnailLocalFile);
 
   const newVideo = await Video.create({
@@ -122,7 +138,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
 
   res
     .status(201)
-    .json(new ApiResponse(201, newVideo, "Video created successfully"));
+    .json(new ApiResponse(201, "Video created successfully", newVideo));
 });
 
 const getVideoById = asyncHandler(async (req, res) => {
@@ -130,7 +146,7 @@ const getVideoById = asyncHandler(async (req, res) => {
   if (!videoId || !isValidObjectId(videoId))
     throw new ApiError(400, "Invalid Video Id");
 
-  const video = await Video.aggregate([
+  const [video] = await Video.aggregate([
     {
       $match: {
         _id: new Types.ObjectId(videoId),
@@ -234,23 +250,22 @@ const getVideoById = asyncHandler(async (req, res) => {
     },
   ]);
 
-  if (!video || video.length === 0) throw new ApiError(404, "Video not found");
+  if (!video) throw new ApiError(404, "Video not found");
 
-  res.json(new ApiResponse(200, video[0], "Video fetched successfully"));
+  res.json(new ApiResponse(200, "Video fetched successfully", video));
 });
 
 const updateVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   const { title, description } = req.body;
 
-  //TODO: update video details like title, description, thumbnail
   if (!videoId || !isValidObjectId(videoId))
     throw new ApiError(400, "Invalid Video Id");
 
   const video = await Video.findById(videoId);
   if (!video) throw new ApiError(404, "Video not found");
 
-  const thumbnailLocalFile = req.file?.thumbnail?.path;
+  const thumbnailLocalFile = req.file?.path;
 
   if (!thumbnailLocalFile && !title && !description) {
     throw new ApiError(400, "At least one field is required");
@@ -259,8 +274,8 @@ const updateVideo = asyncHandler(async (req, res) => {
   if (thumbnailLocalFile) {
     const thumbnail = await uploadFileOnCloudinary(thumbnailLocalFile);
     if (thumbnail) {
-      await deleteCloudinaryFile(video.thumbnail);
       video.thumbnail = thumbnail.url;
+      deleteCloudinaryFile(video.thumbnail);
     }
   }
 
@@ -268,7 +283,7 @@ const updateVideo = asyncHandler(async (req, res) => {
   if (description) video.description = description;
   await video.save({ validateBeforeSave: false });
 
-  res.json(new ApiResponse(200, video, "Video updated successfully"));
+  res.json(new ApiResponse(200, "Video updated successfully", video));
 });
 
 const deleteVideo = asyncHandler(async (req, res) => {
@@ -300,7 +315,7 @@ const deleteVideo = asyncHandler(async (req, res) => {
     }
   );
   await video.deleteOne();
-  res.json(new ApiResponse(200, {}, "Video deleted successfully"));
+  res.json(new ApiResponse(200, "Video deleted successfully"));
 });
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
@@ -317,7 +332,7 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
     validateBeforeSave: false,
   });
 
-  res.json(new ApiResponse(200, video, "Video updated successfully"));
+  res.json(new ApiResponse(200, "Video status updated successfully", video));
 });
 
 const addViews = asyncHandler(async (req, res) => {
@@ -347,11 +362,9 @@ const addViews = asyncHandler(async (req, res) => {
   );
 
   res.json(
-    new ApiResponse(
-      200,
-      { views: video.views + 1 },
-      "Video views updated successfully"
-    )
+    new ApiResponse(200, "Video views updated successfully", {
+      views: video.views + 1,
+    })
   );
 });
 
