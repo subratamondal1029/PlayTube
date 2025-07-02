@@ -7,11 +7,18 @@ import { Comment } from "../models/comment.model.js";
 const getVideoComments = asyncHandler(async (req, res) => {
   //TODO: get all comments for a video
   const { videoId } = req.params;
-  const { page = 1, limit = 10 } = req.query;
+  let { page, limit } = req.query;
+
+  if (!page) page = 1;
+  if (!limit) limit = 10;
+
   const skipPage = (Number(page) - 1) * Number(limit);
 
   if (!videoId || !isValidObjectId(videoId))
     throw new ApiError(400, "Invalid Video Id");
+
+  const totalComments = await Comment.countDocuments({ video: videoId });
+  const totalPages = Math.ceil(totalComments / Number(limit));
 
   const comments = await Comment.aggregate([
     {
@@ -74,18 +81,30 @@ const getVideoComments = asyncHandler(async (req, res) => {
 
   if (!comments) throw new ApiError(500, "Error while fetching comments");
 
-  res.json(new ApiResponse(200, comments, "Comments fetched successfully"));
+  res.json(
+    new ApiResponse(200, "Comments fetched successfully", {
+      comments,
+      totalComments,
+      totalPages,
+    })
+  );
 });
 
 const getTweetComments = asyncHandler(async (req, res) => {
   //TODO: get all comments for a video
   const { tweetId } = req.params;
-  const { page = 1, limit = 10 } = req.query;
+  let { page, limit } = req.query;
+
+  if (!page) page = 1;
+  if (!limit) limit = 10;
 
   const skipPage = (Number(page) - 1) * Number(limit);
 
   if (!tweetId || !isValidObjectId(tweetId))
     throw new ApiError(400, "Invalid Video Id");
+
+  const totalComments = await Comment.countDocuments({ tweet: tweetId });
+  const totalPages = Math.ceil(totalComments / Number(limit));
 
   const comments = await Comment.aggregate([
     {
@@ -125,11 +144,16 @@ const getTweetComments = asyncHandler(async (req, res) => {
 
   if (!comments) throw new ApiError(500, "Error while fetching comments");
 
-  res.json(new ApiResponse(200, comments, "Comments fetched successfully"));
+  res.json(
+    new ApiResponse(200, "Comments fetched successfully", {
+      comments,
+      totalComments,
+      totalPages,
+    })
+  );
 });
 
 const addComment = asyncHandler(async (req, res) => {
-  // TODO: add a comment to a video
   const { content, videoId, tweetId } = req.body;
 
   if (!content) throw new ApiError(400, "Content is required");
@@ -144,7 +168,6 @@ const addComment = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid video ID or tweet ID");
   }
 
-  // TODO: add a validatio for only 10 comment on a video or tweet
   if (videoId) {
     const existingCommentsOnVideo = await Comment.find({ video: videoId });
     if (existingCommentsOnVideo.length >= 10)
@@ -162,7 +185,7 @@ const addComment = asyncHandler(async (req, res) => {
 
   res
     .status(201)
-    .json(new ApiResponse(201, comment, "comment added successfully"));
+    .json(new ApiResponse(201, "Comment Added successfully", comment));
 });
 
 const updateComment = asyncHandler(async (req, res) => {
@@ -185,7 +208,7 @@ const updateComment = asyncHandler(async (req, res) => {
   );
 
   if (!comment) throw new ApiError(500, "Error while updating comment");
-  res.json(new ApiResponse(200, comment, "comment updated successfully"));
+  res.json(new ApiResponse(200, "Comment updated successfully", comment));
 });
 
 const deleteComment = asyncHandler(async (req, res) => {
@@ -194,13 +217,15 @@ const deleteComment = asyncHandler(async (req, res) => {
   if (!commentId || !isValidObjectId(commentId))
     throw new ApiError(400, "Invalid TweetId");
 
-  const comment = await Comment.findByIdAndDelete({
+  const comment = await Comment.findById(commentId);
+  if (!comment) throw new ApiError(404, "Comment not found");
+
+  await Comment.findByIdAndDelete({
     _id: commentId,
     owner: req.user._id,
   });
-  if (!comment) throw new ApiError(500, "Comment delete failed");
 
-  res.json(new ApiResponse(200, {}, "Comment Deleted successfully"));
+  res.json(new ApiResponse(200, "Comment Deleted successfully"));
 });
 
 export {
