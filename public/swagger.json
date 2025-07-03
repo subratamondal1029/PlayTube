@@ -1,0 +1,3835 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "PlayTube",
+    "description": "PlayTube is a YouTube-style backend project that provides APIs for managing videos, likes, comments, tweets, channels, playlists, and user accounts. It serves as the core backend system for a video-sharing platform.",
+    "contact": {
+      "name": "Subrata Mondal",
+      "email": "subratamondal@tutanota.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "externalDocs": {
+    "description": "Github Repo",
+    "url": "https://github.com/subratamondal1029/PlayTube"
+  },
+  "tags": [
+    {
+      "name": "users"
+    },
+    {
+      "name": "video"
+    },
+    {
+      "name": "channel"
+    },
+    {
+      "name": "comment"
+    },
+    {
+      "name": "tweet"
+    },
+    {
+      "name": "like"
+    },
+    {
+      "name": "playlist"
+    }
+  ],
+  "paths": {
+    "/users/current-user": {
+      "get": {
+        "summary": "get loggedin user",
+        "deprecated": false,
+        "description": "",
+        "tags": ["users"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/login": {
+      "post": {
+        "summary": "login",
+        "deprecated": false,
+        "description": "",
+        "tags": ["users"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "username": "subrata",
+                "password": "@1Iamsubrata"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "status": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {}
+                    }
+                  },
+                  "required": ["status", "data", "message", "success"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/logout": {
+      "post": {
+        "summary": "logout",
+        "deprecated": false,
+        "description": "",
+        "tags": ["users"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/refresh-accessToken": {
+      "post": {
+        "summary": "Refresh access token",
+        "deprecated": false,
+        "description": "",
+        "tags": ["users"],
+        "parameters": [
+          {
+            "name": "x-refresh-token",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzI2MjRkNDlhYzNiYjhhNmRhYzY4M2QiLCJpYXQiOjE3NDkzNjc2OTMsImV4cCI6MTc1MDIzMTY5M30.iDP5T9oXOUGWN0JYGYj7TKq4qomHfC7X_jUypi59osM",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "accessToken": {
+                          "type": "string",
+                          "description": "access token"
+                        },
+                        "refreshToken": {
+                          "type": "string"
+                        }
+                      },
+                      "description": "Response Data",
+                      "required": ["accessToken", "refreshToken"]
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/watch-history": {
+      "get": {
+        "summary": "get user watch History",
+        "deprecated": false,
+        "description": "",
+        "tags": ["users"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/register": {
+      "post": {
+        "summary": "create user",
+        "deprecated": false,
+        "description": "",
+        "tags": ["users"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fullName": {
+                    "example": "Alice Kumar two",
+                    "type": "string"
+                  },
+                  "username": {
+                    "example": "alicek992",
+                    "type": "string"
+                  },
+                  "email": {
+                    "example": "alice.kumar2@example.com",
+                    "type": "string"
+                  },
+                  "password": {
+                    "example": "@1Iamalice",
+                    "type": "string"
+                  },
+                  "avatar": {
+                    "format": "binary",
+                    "type": "string",
+                    "example": "file:///home/subrata/Pictures/Camera/passport_size_complete1.png"
+                  },
+                  "coverImage": {
+                    "format": "binary",
+                    "type": "string",
+                    "example": ""
+                  }
+                },
+                "required": [
+                  "fullName",
+                  "username",
+                  "email",
+                  "password",
+                  "avatar"
+                ]
+              },
+              "example": ""
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/updated-avatar": {
+      "patch": {
+        "summary": "update avatar",
+        "deprecated": false,
+        "description": "",
+        "tags": ["users"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "format": "binary",
+                    "type": "string",
+                    "example": "file:///home/subrata/Pictures/Camera/passport_size_complete2.png"
+                  }
+                },
+                "required": ["avatar"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/updated-coverImage": {
+      "patch": {
+        "summary": "update cover image",
+        "deprecated": false,
+        "description": "",
+        "tags": ["users"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "coverImage": {
+                    "format": "binary",
+                    "type": "string",
+                    "example": "file:///home/subrata/Pictures/Screenshots/Screenshot From 2025-06-28 23-05-40.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/v/": {
+      "get": {
+        "summary": "get many video",
+        "deprecated": false,
+        "description": "",
+        "tags": ["video"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 1,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 10,
+            "schema": {
+              "type": "number",
+              "nullable": true
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string",
+              "enum": ["desc", "asc"]
+            }
+          },
+          {
+            "name": "sortType",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/v/{id}": {
+      "get": {
+        "summary": "get single video",
+        "deprecated": false,
+        "description": "",
+        "tags": ["video"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "672b85c6496fd960c870adb5",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["status", "message", "data", "success"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/c/u/{username}": {
+      "get": {
+        "summary": "get channel details",
+        "deprecated": false,
+        "description": "",
+        "tags": ["channel"],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "subrata",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/c/dashboard": {
+      "get": {
+        "summary": "get channel stats",
+        "deprecated": false,
+        "description": "",
+        "tags": ["channel"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "672638088314f871d9790633",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "fullName": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "totalLikes": {
+                          "type": "integer"
+                        },
+                        "totalVideos": {
+                          "type": "integer"
+                        },
+                        "totalSubscribers": {
+                          "type": "integer"
+                        },
+                        "totalSubscribed": {
+                          "type": "integer"
+                        },
+                        "totalViews": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "_id",
+                        "username",
+                        "email",
+                        "fullName",
+                        "createdAt",
+                        "totalLikes",
+                        "totalVideos",
+                        "totalSubscribers",
+                        "totalSubscribed",
+                        "totalViews"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["status", "data", "message", "success"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/c/subscribe/{id}": {
+      "post": {
+        "summary": "subscribe channel",
+        "deprecated": false,
+        "description": "",
+        "tags": ["channel"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "6860f1aec5bf2c1a01e7cba4",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/c//unsubscribe/{channelId}": {
+      "delete": {
+        "summary": "unsubscribe channel",
+        "deprecated": false,
+        "description": "",
+        "tags": ["channel"],
+        "parameters": [
+          {
+            "name": "channelId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "6860f1aec5bf2c1a01e7cba4",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "status": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {}
+                    }
+                  },
+                  "required": ["status", "data", "message", "success"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/c/upload": {
+      "post": {
+        "summary": "upload video",
+        "deprecated": false,
+        "description": "",
+        "tags": ["channel"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "example": "Testing video 2",
+                    "type": "string"
+                  },
+                  "description": {
+                    "example": "This is testing video 2 ",
+                    "type": "string"
+                  },
+                  "isPublished": {
+                    "type": "boolean",
+                    "example": "true"
+                  },
+                  "video": {
+                    "type": "string",
+                    "format": "binary",
+                    "example": "file:///home/subrata/Videos/sample/129427-744370618_medium.mp4"
+                  },
+                  "thumbnail": {
+                    "format": "binary",
+                    "type": "string",
+                    "example": "file:///home/subrata/Pictures/Screenshots/Screenshot From 2025-02-09 22-46-24.png"
+                  }
+                },
+                "required": ["title", "description", "video"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/c/toggle-publish/{videoId}": {
+      "patch": {
+        "summary": "toggle publish video",
+        "deprecated": false,
+        "description": "",
+        "tags": ["channel"],
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "68656393ed6190f9c9442850",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/c/update/{videoId}": {
+      "patch": {
+        "summary": "update video details",
+        "deprecated": false,
+        "description": "",
+        "tags": ["channel"],
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "68656393ed6190f9c9442850",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "example": "",
+                    "type": "string"
+                  },
+                  "description": {
+                    "example": "",
+                    "type": "string"
+                  },
+                  "thumbnail": {
+                    "format": "binary",
+                    "type": "string",
+                    "example": "file:///home/subrata/Pictures/Screenshots/Screenshot From 2025-05-07 20-51-19.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/c/views/{videoId}": {
+      "put": {
+        "summary": "add view to video",
+        "deprecated": false,
+        "description": "",
+        "tags": ["channel"],
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "68656393ed6190f9c9442850",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/c/delete/{videoId}": {
+      "delete": {
+        "summary": "delete video",
+        "deprecated": false,
+        "description": "",
+        "tags": ["channel"],
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "686566f2715c1d50c308fa1e",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/comment/v/{videoId}": {
+      "get": {
+        "summary": "get all video comments",
+        "deprecated": false,
+        "description": "",
+        "tags": ["comment"],
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "672b85c6496fd960c870adb8",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/comment/t/{tweetId}": {
+      "get": {
+        "summary": "get all tweet comments Copy",
+        "deprecated": false,
+        "description": "",
+        "tags": ["comment"],
+        "parameters": [
+          {
+            "name": "tweetId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "6726479f23cf0d8601f66e31",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/comment/create": {
+      "post": {
+        "summary": "add comment",
+        "deprecated": false,
+        "description": "",
+        "tags": ["comment"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "example": "This is testing 2 ",
+                    "type": "string"
+                  },
+                  "videoId": {
+                    "example": "",
+                    "type": "string"
+                  },
+                  "tweetId": {
+                    "example": "6726479f23cf0d8601f66e31",
+                    "type": "string"
+                  }
+                },
+                "required": ["content"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/comment/update/{commentId}": {
+      "patch": {
+        "summary": "update comment",
+        "deprecated": false,
+        "description": "",
+        "tags": ["comment"],
+        "parameters": [
+          {
+            "name": "commentId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "673d5e83f686bf9382974bf5",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "example": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum delectus at, animi consequuntur dolorum doloribus perspiciatis explicabo placeat, eligendi excepturi, omnis sed voluptas recusandae natus aperiam maiores quod. Natus obcaecati, cumque aperiam explicabo quas quia quidem nisi molestias, blanditiis, repellendus incidunt recusandae aspernatur sunt nobis itaque. Ex et corporis magnam exercitationem neque ipsum explicabo error, voluptate libero vel consectetur repellat consequuntur id laborum molestiae impedit quibusdam voluptatem reprehenderit animi qui. Quibusdam, fugiat modi vero, culpa laboriosam magnam possimus ullam dicta nulla architecto veritatis. Reprehenderit cupiditate eveniet sunt! Vel cupiditate deserunt necessitatibus mollitia explicabo quibusdam provident! Eaque, at. Debitis, ipsum necessitatibus shshkkj",
+                    "type": "string"
+                  }
+                },
+                "required": ["content"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/comment/delete/{commentId}": {
+      "delete": {
+        "summary": "delete comment",
+        "deprecated": false,
+        "description": "",
+        "tags": ["comment"],
+        "parameters": [
+          {
+            "name": "commentId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "68656bd1c558894f786caf4f",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/tweet/{userId}": {
+      "get": {
+        "summary": "get users tweet",
+        "deprecated": false,
+        "description": "",
+        "tags": ["tweet"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "672638088314f871d9790633",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {}
+                      },
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/tweet/create": {
+      "post": {
+        "summary": "create tweet",
+        "deprecated": false,
+        "description": "",
+        "tags": ["tweet"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "example": "This is my content for tweet 1",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/tweet/delete/{tweetId}": {
+      "delete": {
+        "summary": "delete tweet",
+        "deprecated": false,
+        "description": "",
+        "tags": ["tweet"],
+        "parameters": [
+          {
+            "name": "tweetId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "68656e206add4be11cdb8839",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/tweet/update/{tweetId}": {
+      "patch": {
+        "summary": "update tweet",
+        "deprecated": false,
+        "description": "",
+        "tags": ["tweet"],
+        "parameters": [
+          {
+            "name": "tweetId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "68656ec0d930579b8dfc7f8f",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "example": "This is my content for tweet 1 edited",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/like/v/{videoId}": {
+      "post": {
+        "summary": "toggle video like",
+        "deprecated": false,
+        "description": "",
+        "tags": ["like"],
+        "parameters": [
+          {
+            "name": "videoId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "672b85c6496fd960c870adb8",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/like/c/{commentId}": {
+      "post": {
+        "summary": "toggle comment like",
+        "deprecated": false,
+        "description": "",
+        "tags": ["like"],
+        "parameters": [
+          {
+            "name": "commentId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "673e123f3cd94c896a869bee",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/like/t/{tweetId}": {
+      "post": {
+        "summary": "toggle tweet like",
+        "deprecated": false,
+        "description": "",
+        "tags": ["like"],
+        "parameters": [
+          {
+            "name": "tweetId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "68656ec0d930579b8dfc7f8f",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/like/liked-videos": {
+      "get": {
+        "summary": "get liked video",
+        "deprecated": false,
+        "description": "",
+        "tags": ["like"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {}
+                      },
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/playlist/create": {
+      "post": {
+        "summary": "create playlist",
+        "deprecated": false,
+        "description": "",
+        "tags": ["playlist"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "name",
+                    "example": "playlist one",
+                    "type": "string"
+                  },
+                  "description": {
+                    "example": "This is playlist one ",
+                    "type": "string"
+                  },
+                  "videoId": {
+                    "example": "68656393ed6190f9c9442850",
+                    "type": "string"
+                  }
+                },
+                "required": ["name", "description", "videoId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/playlist/u/{userId}": {
+      "get": {
+        "summary": "get user playlists",
+        "deprecated": false,
+        "description": "",
+        "tags": ["playlist"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "672624d49ac3bb8a6dac683d",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {}
+                      },
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/playlist/update/{playlistId}": {
+      "patch": {
+        "summary": "update playlist details",
+        "deprecated": false,
+        "description": "",
+        "tags": ["playlist"],
+        "parameters": [
+          {
+            "name": "playlistId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "6866ad6e6de219aa8dcd6435",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "name",
+                    "example": "Playlist one Edited",
+                    "type": "string"
+                  },
+                  "description": {
+                    "example": "",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/playlist/delete/{playlistId}": {
+      "delete": {
+        "summary": "delete playlist",
+        "deprecated": false,
+        "description": "",
+        "tags": ["playlist"],
+        "parameters": [
+          {
+            "name": "playlistId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "6866ae53cb61ec41becf855a",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/playlist/{playlistId}": {
+      "get": {
+        "summary": "get one playlist",
+        "deprecated": false,
+        "description": "",
+        "tags": ["playlist"],
+        "parameters": [
+          {
+            "name": "playlistId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "6866ad6e6de219aa8dcd6435",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/playlist/add/{playlistId}/v/{videoId}": {
+      "put": {
+        "summary": "add video to playlist",
+        "deprecated": false,
+        "description": "",
+        "tags": ["playlist"],
+        "parameters": [
+          {
+            "name": "playlistId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "6866ad6e6de219aa8dcd6435",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "videoId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "672b85c6496fd960c870adb8",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/playlist/delete/{playlistId}/v/{videoId}": {
+      "delete": {
+        "summary": "remove video from playlist",
+        "deprecated": false,
+        "description": "",
+        "tags": ["playlist"],
+        "parameters": [
+          {
+            "name": "playlistId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "6866ad6e6de219aa8dcd6435",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "videoId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "672b85c6496fd960c870adb8",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          },
+          "x-200:Success": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Response Message",
+                      "faker": "lorem.sentence"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data",
+                      "nullable": true
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "health check",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true,
+                      "faker": "datatype.boolean",
+                      "description": "Success or not"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "status",
+                      "faker": "internet.httpStatusCode"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "Response Data"
+                    }
+                  },
+                  "required": ["status", "message", "success", "data"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ]
+}

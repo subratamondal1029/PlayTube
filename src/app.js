@@ -10,6 +10,9 @@ import playlistRouter from "./routes/playlist.routes.js";
 import videoRouter from "./routes/video.routes.js";
 import { healthcheck } from "./controllers/healthCheck.controllers.js";
 import unavailableRoute from "./middlewares/unavailableRoute.middleware.js";
+import swaggerUi from "swagger-ui-express";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 
 const app = express();
 
@@ -20,7 +23,12 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 // Routes
-app.use("/api/v1/health", healthcheck);
+app.use(
+  "/api/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(require("../public/swagger.json"))
+);
+app.get("/api/v1/health", healthcheck);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/c", channelRouter);
 app.use("/api/v1/tweet", tweetRouter);
