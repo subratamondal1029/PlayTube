@@ -24,18 +24,16 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
   try {
     if (isLiked) {
       await Like.findByIdAndDelete(isLiked._id);
-      res.json(new ApiResponse(200, {}, "Like removed successfully"));
+      res.json(new ApiResponse(200, "Like removed successfully"));
     } else {
       await Like.create({
         video: videoId,
         likedBy: req.user._id,
       });
       res.json(
-        new ApiResponse(
-          200,
-          { userId: req.user._id },
-          "Like added successfully"
-        )
+        new ApiResponse(200, "Like added successfully", {
+          userId: req.user._id,
+        })
       );
     }
   } catch (error) {
@@ -60,18 +58,16 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
   try {
     if (isLiked) {
       await Like.findByIdAndDelete(isLiked._id);
-      res.json(new ApiResponse(200, {}, "Like removed successfully"));
+      res.json(new ApiResponse(200, "Like removed successfully"));
     } else {
       await Like.create({
         comment: commentId,
         likedBy: req.user._id,
       });
       res.json(
-        new ApiResponse(
-          200,
-          { userId: req.user._id },
-          "Like added successfully"
-        )
+        new ApiResponse(200, "Like added successfully", {
+          userId: req.user._id,
+        })
       );
     }
   } catch (error) {
@@ -96,18 +92,16 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
   try {
     if (isLiked) {
       await Like.findByIdAndDelete(isLiked._id);
-      res.json(new ApiResponse(200, {}, "Like removed successfully"));
+      res.json(new ApiResponse(200, "Like removed successfully"));
     } else {
       await Like.create({
         tweet: tweetId,
         likedBy: req.user._id,
       });
       res.json(
-        new ApiResponse(
-          200,
-          { userId: req.user._id },
-          "Like added successfully"
-        )
+        new ApiResponse(200, "Like added successfully", {
+          userId: req.user._id,
+        })
       );
     }
   } catch (error) {
@@ -160,7 +154,7 @@ const getLikedVideos = asyncHandler(async (req, res) => {
   // TODO: check for multiple videos
 
   res.json(
-    new ApiResponse(200, likedVideos, "Liked videos fetched successfully")
+    new ApiResponse(200, "Liked videos fetched successfully", likedVideos)
   );
 });
 
