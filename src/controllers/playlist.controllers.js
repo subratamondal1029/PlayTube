@@ -29,7 +29,7 @@ const createPlaylist = asyncHandler(async (req, res) => {
 
   res
     .status(201)
-    .json(new ApiResponse(201, playlist, "Playlist created successfully"));
+    .json(new ApiResponse(201, "Playlist created successfully", playlist));
 });
 
 const getUserPlaylists = asyncHandler(async (req, res) => {
@@ -93,9 +93,9 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
   ]);
 
   if (!playlist || playlist.length === 0)
-    throw new ApiError(404, "Playlist not found");
+    throw new ApiError(404, "Playlists not found");
 
-  res.json(new ApiResponse(200, playlist, "Playlist found"));
+  res.json(new ApiResponse(200, "Playlists found", playlist));
 });
 
 const getPlaylistById = asyncHandler(async (req, res) => {
@@ -158,7 +158,7 @@ const getPlaylistById = asyncHandler(async (req, res) => {
 
   if (!playlist) throw new ApiError(404, "Playlist not found");
 
-  res.json(new ApiResponse(200, playlist, "Playlist found"));
+  res.json(new ApiResponse(200, "Playlist found", playlist));
 });
 
 const addVideoToPlaylist = asyncHandler(async (req, res) => {
@@ -184,7 +184,7 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
   playlist.videos.push(videoId);
   await playlist.save();
 
-  res.json(new ApiResponse(200, playlist, "Video added successfully"));
+  res.json(new ApiResponse(200, "Video added successfully", playlist));
 });
 
 const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
@@ -210,7 +210,7 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
   playlist.videos.pull(videoId);
   await playlist.save();
 
-  res.json(new ApiResponse(200, playlist, "Video removed successfully"));
+  res.json(new ApiResponse(200, "Video removed successfully", playlist));
 });
 
 const deletePlaylist = asyncHandler(async (req, res) => {
@@ -226,7 +226,7 @@ const deletePlaylist = asyncHandler(async (req, res) => {
 
   await Playlist.findByIdAndDelete(playlistId);
 
-  res.json(new ApiResponse(200, {}, "Playlist deleted successfully"));
+  res.json(new ApiResponse(200, "Playlist deleted successfully"));
 });
 
 const updatePlaylist = asyncHandler(async (req, res) => {
@@ -241,11 +241,14 @@ const updatePlaylist = asyncHandler(async (req, res) => {
   if (playlist.owner._id.toString() !== req.user._id.toString())
     throw new ApiError(403, "Unauthorized");
 
-  if (name) playlist.name = name;
-  if (description) playlist.description = description;
+  if (!name?.trim() && !description?.trim())
+    throw new ApiError(400, "At least one field is required");
+
+  if (name?.trim()) playlist.name = name;
+  if (description?.trim()) playlist.description = description;
   await playlist.save({ validateBeforeSave: false });
 
-  res.json(new ApiResponse(200, playlist, "Playlist updated successfully"));
+  res.json(new ApiResponse(200, "Playlist updated successfully", playlist));
 });
 
 export {
